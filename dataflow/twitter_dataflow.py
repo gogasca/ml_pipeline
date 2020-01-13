@@ -28,8 +28,8 @@ PIPELINE_MODE = 'DataflowRunner'
 SERVICE_URL = (
     'https://storage.googleapis.com/cloud-ml/discovery/ml_v1_discovery.json')
 BUCKET = os.getenv('BUCKET')
-STAGING_LOCATION = os.getenv('PROJECT_ID')
-TEMP_LOCATION = os.getenv('STAGING_LOCATION')
+STAGING_LOCATION = os.getenv('STAGING_LOCATION')
+TEMP_LOCATION = os.getenv('TEMP_LOCATION')
 REGION = os.getenv('REGION')
 DATASET = os.getenv('DATASET')
 TWITTER_TABLE = os.getenv('TWITTER_TABLE')
