@@ -27,14 +27,14 @@ PROJECT_ID = os.getenv('PROJECT_ID')
 PIPELINE_MODE = 'DataflowRunner'
 SERVICE_URL = (
     'https://storage.googleapis.com/cloud-ml/discovery/ml_v1_discovery.json')
-BUCKET = 'news-ml-dev'
-STAGING_LOCATION = 'gs://news-ml-dev/news-ml-twitter/staging'
-TEMP_LOCATION = 'gs://news-ml-dev/news-ml-twitter/tmp'
-REGION = 'us-central1'
-DATASET = 'newsml_dataset_twitter'
-TWITTER_TABLE = 'twitter_posts_test'
-TWITTER_TABLE_SENTIMENT = 'twitter_mean_sentiment_test'
-MODEL_URL = 'projects/news-ml-257304/models/twitter'
+BUCKET = os.getenv('BUCKET')
+STAGING_LOCATION = os.getenv('PROJECT_ID')
+TEMP_LOCATION = os.getenv('STAGING_LOCATION')
+REGION = os.getenv('REGION')
+DATASET = os.getenv('DATASET')
+TWITTER_TABLE = os.getenv('TWITTER_TABLE')
+TWITTER_TABLE_SENTIMENT = os.getenv('TWITTER_TABLE_SENTIMENT')
+MODEL_URL = os.getenv('MODEL_URL')
 
 _RATE_LIMIT_RETRIES = 3
 _RETRY_DELAY = 1
@@ -161,15 +161,12 @@ def main(argv=None):
     group.add_argument(
         '--input_subscription',
         help=('Input PubSub subscription of the form: '
-              '"projects/<PROJECT_ID>/subscriptions/<SUBSCRIPTION>."'),
-        default="projects/news-ml-257304/subscriptions/news-ml-test"
-
+              '"projects/<PROJECT_ID>/subscriptions/<SUBSCRIPTION>."')
     )
     group.add_argument(
         '--input_topic',
         help=('Input PubSub topic of the form: '
-              '"projects/<PROJECT_ID>/topics/<TOPIC>."'),
-        default="projects/news-ml-257304/topics/news-ml-test"
+              '"projects/<PROJECT_ID>/topics/<TOPIC>."')
     )
 
     known_args, pipeline_args = parser.parse_known_args(argv)
