@@ -1,0 +1,6 @@
+apache-beam[gcp]==2.17.0
+google-cloud-pubsub
+google-api-python-client
+numpy
+urllib3
+
