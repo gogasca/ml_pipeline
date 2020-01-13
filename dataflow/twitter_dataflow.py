@@ -123,7 +123,8 @@ def main(argv=None):
         if not isinstance(messages, list):
             messages = [messages]
         # Messages from PubSub are JSON strings
-        instances = list(map(lambda message: json.loads(message), messages))
+        instances = list(
+            map(lambda message: json.loads(message.decode('utf-8')), messages))
         # Estimate the sentiment of the 'text' of each tweet.
         scores = predict([instance['text'] for instance in instances])
         # Join them together
@@ -147,13 +148,13 @@ def main(argv=None):
                                         "type": "TIMESTAMP"}
                                        ]}
     bigquery_schema = parse_table_schema_from_json(
-        str(json.dumps(bigquery_schema_json)))
+        json.dumps(bigquery_schema_json))
     """Tweets sentiment tables."""
     bigquery_schema_mean_json = {
         "fields": [{"name": "posted_at", "type": "TIMESTAMP"},
                    {"name": "sentiment", "type": "FLOAT"}]}
     bigquery_schema_mean = parse_table_schema_from_json(
-        str(json.dumps(bigquery_schema_mean_json)))
+        json.dumps(bigquery_schema_mean_json))
 
     """Build and run the pipeline."""
     parser = argparse.ArgumentParser()
