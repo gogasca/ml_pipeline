@@ -147,13 +147,13 @@ def main(argv=None):
                                         "type": "TIMESTAMP"}
                                        ]}
     bigquery_schema = parse_table_schema_from_json(
-        json.dumps(bigquery_schema_json))
+        str(json.dumps(bigquery_schema_json)))
     """Tweets sentiment tables."""
     bigquery_schema_mean_json = {
         "fields": [{"name": "posted_at", "type": "TIMESTAMP"},
                    {"name": "sentiment", "type": "FLOAT"}]}
     bigquery_schema_mean = parse_table_schema_from_json(
-        json.dumps(bigquery_schema_mean_json))
+        str(json.dumps(bigquery_schema_mean_json)))
 
     """Build and run the pipeline."""
     parser = argparse.ArgumentParser()
