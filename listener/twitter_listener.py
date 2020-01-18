@@ -32,7 +32,8 @@ _RETRY_MAX_DELAY = 4
 _TIME_FORMAT = '%a %b %d %H:%M:%S +0000 %Y'
 _CREATED_FORMAT = '%Y-%m-%d %H:%M:%S'
 
-_TWEET_FIELDS = ['text', 'user_id', 'id', 'media', 'posted_at']
+_TWEET_FIELDS = ['text', 'user_id', 'id', 'favorite_count', 'retweet_count',
+                 'media', 'posted_at']
 _PROCESSED_TWEET_FIELDS = ['id', 'lang', 'retweeted_id', 'favorite_count',
                           'retweet_count', 'coordinates_latitude',
                           'coordinates_longitude', 'place', 'user_id',
@@ -78,7 +79,9 @@ def write_to_pubsub(data):
 
         posted_at = datetime.datetime.fromtimestamp(
             data['created_at']).strftime(_CREATED_FORMAT)
-        tweet = Tweet(data['text'], data['user_id'], data['id'], data['media'], posted_at)
+        tweet = Tweet(data['text'], data['user_id'], data['id'],
+                      data['favorite_count'], data['retweet_count'],
+                      ','.join(map(str, data['media'])), posted_at)
         tweet_data = json.dumps(tweet._asdict()).encode('utf-8')
         if data['lang'] == 'en':
             publisher.publish(topic_path,

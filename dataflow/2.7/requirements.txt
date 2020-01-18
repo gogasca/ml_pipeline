@@ -1,7 +1,0 @@
-apache-beam[gcp]
-google-api-python-client
-google-cloud-pubsub
-numpy
-urllib3
-
-
