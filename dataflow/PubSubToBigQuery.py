@@ -30,7 +30,7 @@ socket.setdefaulttimeout(TIMEOUT_IN_SEC)
 PROJECT_ID = os.getenv('PROJECT_ID')
 DISCOVERY_URL = 'https://storage.googleapis.com/cloud-ml/discovery' \
                 '/ml_v1_discovery.json'
-MODEL_VERSION = 'projects/news-ml-257304/models/twitter'  # Required field.
+MODEL_VERSION = 'projects/<YOUR-PROJECT-ID>/models/twitter'  # Required field.
 api_client = None
 
 
@@ -47,13 +47,12 @@ def initialize_api():
 
 
 def prediction(instances):
-    """
-    Calls the tweet_sentiment_classifier API on AI Platform to get predictions.
+    """Calls the Model prediction API on AI Platform to get scores.
 
     Args:
         instances: list of strings.
     Returns:
-        float: estimated values
+        [float]: A list of estimated values.
     """
 
     # Init the Platform API
@@ -70,6 +69,11 @@ def prediction(instances):
 
 
 def prediction_helper(messages):
+    """Processes PubSub messages and calls AI Platform prediction.
+
+    :param messages:
+    :return:
+    """
     # Handle single string.
     if not isinstance(messages, list):
         messages = [messages]
@@ -90,7 +94,7 @@ def prediction_helper(messages):
 
 
 def run(args, pipeline_args=None):
-    """
+    """Executes Pipeline.
 
     :param args:
     :param pipeline_args:
