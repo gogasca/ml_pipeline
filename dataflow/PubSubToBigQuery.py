@@ -30,7 +30,7 @@ socket.setdefaulttimeout(TIMEOUT_IN_SEC)
 PROJECT_ID = os.getenv('PROJECT_ID')
 DISCOVERY_URL = 'https://storage.googleapis.com/cloud-ml/discovery' \
                 '/ml_v1_discovery.json'
-MODEL_VERSION = 'projects/<YOUR-PROJECT-ID>/models/twitter'  # Required field.
+MODEL_VERSION = 'projects/<PROJECT_ID>/models/twitter'  # Required field.
 api_client = None
 
 

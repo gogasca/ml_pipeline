@@ -4,7 +4,10 @@
 
 * [PubSubToBigQuery.py](PubSubToBigQuery.py)
 
-The following example will run a streaming pipeline. It will read messages from a Pub/Sub topic, then window them into fixed-sized intervals, and write one file per window into a GCS location.
+The following example will run a streaming pipeline. It will read 
+messages from a Pub/Sub topic, then window them into fixed-sized intervals, 
+after that, it will call the Prediction API, once it gets the results,
+will write them into BigQuery.
 
 + `--project`: sets the Google Cloud project ID to run the pipeline on
 + `--input-topic`: sets the input Pub/Sub topic to read messages from
@@ -13,7 +16,6 @@ The following example will run a streaming pipeline. It will read messages from 
 + `--temp-location`: needed for executing the pipeline
 + `--bigquery-dataset`:  BigQuery dataset reference
 + `--bigquery-table`: BigQuery table reference for output.
-+ `--model-url`: Model URL in AI Platform prediction
 + `--window-size [optional]`: specifies the window size in seconds, defaults to 60
 + `--min-batch-size [optional]`: specifies the batch min size
 + `--max-batch-size [optional]`: specifies the batch max size
@@ -61,7 +63,6 @@ export WINDOW_SIZE=60
 export MIN_BATCH_SIZE=9
 export MAX_BATCH_SIZE=10
 export RUNNER=DataflowRunner
-export MODEL_URL=projects/news-ml-257304/models/twitter
 ```
 
 Define your Credentials file:
@@ -78,7 +79,6 @@ python PubSubToBigQuery.py \
     --temp-location=${TEMP_LOCATION} \
     --bigquery-dataset=${BIGQUERY_DATASET} \
     --bigquery-table=${BIGQUERY_TABLE} \
-    --model-url=${MODEL_URL} \
     --window-size=${WINDOW_SIZE} \
     --min-batch-size=${MIN_BATCH_SIZE} \
     --max-batch-size=${MAX_BATCH_SIZE} \
