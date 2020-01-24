@@ -73,14 +73,15 @@ export GOOGLE_APPLICATION_CREDENTIALS="news-ml.json"
 ```
 docker run -d --name="twitter-listener" --hostname="twitter-listener" 
     -v /usr/local/src/newsml/conf/credentials/key.json:/config \
-    -e PROJECT_ID="" 
-    -e PUBSUB_TOPIC="" 
-    -e CONSUMER_KEY="" 
-    -e CONSUMER_SECRET="" 
-    -e ACCESS_TOKEN="" 
-    -e ACCESS_TOKEN_SECRET="" 
-    -e GOOGLE_APPLICATION_CREDENTIALS="/config"
-    -v ~/.config:/root/.config twitter-listener
+    -e PROJECT_ID="" \
+    -e PUBSUB_TOPIC="" \ 
+    -e CONSUMER_KEY="" \
+    -e CONSUMER_SECRET="" \ 
+    -e ACCESS_TOKEN="" \
+    -e ACCESS_TOKEN_SECRET="" \ 
+    -e GOOGLE_APPLICATION_CREDENTIALS="/config" \
+    -v ~/.config:/root/.config twitter-listener \
+    --restart on-failure:5
 ```
 
 Verify tweets are being captured

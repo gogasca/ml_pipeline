@@ -34,7 +34,7 @@ and pushes it to a PubSub topic.
 2. Create BigQuery table using BigQuery UI
 
 ```
-CREATE TABLE BIGQUERY_DATASET.BIGQUERY_TABLE (
+CREATE TABLE newsml_dataset_twitter_dev.twitter_posts_dev (
    id STRING NOT NULL,
    text STRING,
    user_id STRING,
@@ -72,7 +72,7 @@ export GOOGLE_CLOUD_CREDENTIALS='key.json'
 Execute the program as follows:
 
 ```
-python PubSubToBigQuery.py \
+python PubSubToBigQueryWithAPI.py \
     --input-topic=${INPUT_TOPIC} \
     --region=${REGION} \
     --staging-location=${STAGING_LOCATION} \
@@ -82,6 +82,7 @@ python PubSubToBigQuery.py \
     --window-size=${WINDOW_SIZE} \
     --min-batch-size=${MIN_BATCH_SIZE} \
     --max-batch-size=${MAX_BATCH_SIZE} \
-    --runner=${RUNNER} &
+    --runner=${RUNNER} \
+    --requirements_file requirements.txt &
 ```
 

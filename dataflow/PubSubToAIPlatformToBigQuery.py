@@ -24,13 +24,13 @@ from apache_beam.transforms.util import BatchElements
 from googleapiclient import discovery
 from googleapiclient.errors import HttpError
 
-TIMEOUT_IN_SEC = 60 * 3 # 3 minutes timeout limit
+TIMEOUT_IN_SEC = 60 * 2  # 2 minutes timeout limit
 socket.setdefaulttimeout(TIMEOUT_IN_SEC)
 
 PROJECT_ID = os.getenv('PROJECT_ID')
 DISCOVERY_URL = 'https://storage.googleapis.com/cloud-ml/discovery' \
                 '/ml_v1_discovery.json'
-MODEL_VERSION = 'projects/<PROJECT_ID>/models/twitter'  # Required field.
+MODEL_VERSION = 'projects/news-ml-257304/models/twitter'  # Required field.
 api_client = None
 
 
@@ -46,7 +46,7 @@ def initialize_api():
                                      cache_discovery=True)
 
 
-def prediction(instances):
+def get_sentiment(instances):
     """Calls the Model prediction API on AI Platform to get scores.
 
     Args:
@@ -57,15 +57,29 @@ def prediction(instances):
 
     # Init the Platform API
     initialize_api()
-    logging.info('Making request to the AI Platform API')
     # Call the model
     try:
         responses = api_client.projects().predict(body={'instances': instances},
                                                   name=MODEL_VERSION,
                                                   ).execute()
-        return [response['score'] for response in responses['predictions']]
+        return [response.get('score') if
+                response.get('score') else -1 for response in
+                responses['predictions']]
     except HttpError as err:
         logging.exception(err)
+
+
+def format_text(text):
+    """
+
+    :param text:
+    :return:
+    """
+    if not text:
+        raise ValueError('Empty text')
+    return text.encode('utf-8') if isinstance(text,
+                                              unicode) else str(
+        text)
 
 
 def prediction_helper(messages):
@@ -82,14 +96,17 @@ def prediction_helper(messages):
     instances = list(map(lambda message: json.loads(message), messages))
 
     # Estimate the sentiment of the 'text' of each tweet
-    scores = prediction([instance['text'] for instance in instances])
-    if scores:
+    scores = get_sentiment(
+        [format_text(instance.get('text')) for instance in instances if
+         instance.get('text')])
+    
+    if len(scores) == len(instances):
         for i, instance in enumerate(instances):
             instance['sentiment'] = scores[i]
-        logging.info('First message in batch: {}'.format(instances[0]))
         return instances
     else:
-        logging.error('Invalid scores')
+        logging.error('Invalid scores {} instances {}'.format(len(scores),
+                                                              len(instances)))
         return
 
 
@@ -110,6 +127,7 @@ def run(args, pipeline_args=None):
     # Run on Cloud DataFlow by default
     google_cloud_options = pipeline_options.view_as(GoogleCloudOptions)
     google_cloud_options.project = PROJECT_ID
+    google_cloud_options.job_name = 'pubsub-aiplatform-bigquery'
     google_cloud_options.staging_location = args.staging_location
     google_cloud_options.temp_location = args.temp_location
     google_cloud_options.region = args.region
@@ -119,7 +137,7 @@ def run(args, pipeline_args=None):
     lines = p | 'read in tweets' >> beam.io.ReadFromPubSub(
         topic=args.input_topic,
         with_attributes=False,
-        id_label='tweet_id')
+        id_label='tweet_id')  # TODO: Change to PubSub id.
 
     # Window them, and batch them into batches. (Not too large)
     output_tweets = (lines | 'assign window key' >> beam.WindowInto(

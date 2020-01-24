@@ -1,0 +1,11 @@
+export INPUT_TOPIC="projects/news-ml-257304/topics/news-ml-twitter"
+export REGION="us-central1"
+export STAGING_LOCATION="gs://news-ml-dev/news-ml-twitter/staging"
+export TEMP_LOCATION="gs://news-ml-dev/news-ml-twitter/tmp"
+export BIGQUERY_DATASET="newsml_dataset_twitter_dev"
+export BIGQUERY_TABLE="twitter_posts_dev"
+export GOOGLE_APPLICATION_CREDENTIALS="/usr/local/src/key.json"
+export RUNNER="DataflowRunner"
+export WINDOW_SIZE=10
+export MIN_BATCH_SIZE=49
+export MAX_BATCH_SIZE=50
