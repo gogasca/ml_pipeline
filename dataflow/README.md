@@ -33,34 +33,35 @@ and pushes it to a PubSub topic.
 1. Create a BigQuery dataset in BigQuery UI
 2. Create BigQuery table using BigQuery UI
 
-```
-CREATE TABLE newsml_dataset_twitter_dev.twitter_posts_dev (
-   id STRING NOT NULL,
-   text STRING,
-   user_id STRING,
-   sentiment FLOAT64,
-   posted_at TIMESTAMP,
-   favorite_count INT64,
-   retweet_count INT64,
-   media STRING
+```postgres-sql
+CREATE TABLE your_bq_dataset.your_bq_table (
+    id STRING NOT NULL,
+    text STRING,
+    user_id STRING,
+    sentiment FLOAT64,
+    posted_at TIMESTAMP,
+    favorite_count INT64,
+    retweet_count INT64,
+    media STRING
  )
  PARTITION BY DATE(_PARTITIONTIME)
  OPTIONS(
    description="A Twitter table"
- )
+ );
 ```
 
 3. Define the DataFlow pipeline parameters
   
-```
-export INPUT_TOPIC=projects/news-ml-257304/topics/news-ml-twitter
-export STAGING_LOCATION=gs://news-ml-dev/twitter-pipeline/staging
-export TEMP_LOCATION=gs://news-ml-dev/twitter-pipeline/tmp
+```shell script
+export PROJECT_ID=your_project # TODO Change
+export INPUT_TOPIC=projects/$PROJECT_ID/topics/$TOPIC
+export STAGING_LOCATION=gs://$BUCKET/dataflow-pipeline/staging
+export TEMP_LOCATION=gs://$BUCKET/dataflow-pipeline/tmp
 export REGION=us-central1
-export BIGQUERY_DATASET=newsml_dataset_twitter
-export BIGQUERY_TABLE=twitter_posts
+export BIGQUERY_DATASET=your_bq_dataset # TODO Change
+export BIGQUERY_TABLE=your_bq_table # TODO Change
 export WINDOW_SIZE=60
-export MIN_BATCH_SIZE=9
+export MIN_BATCH_SIZE=5
 export MAX_BATCH_SIZE=10
 export RUNNER=DataflowRunner
 ```
@@ -71,7 +72,7 @@ export GOOGLE_CLOUD_CREDENTIALS='key.json'
 ```
 Execute the program as follows:
 
-```
+```shell script
 python PubSubToBigQueryWithAPI.py \
     --input-topic=${INPUT_TOPIC} \
     --region=${REGION} \
@@ -86,3 +87,18 @@ python PubSubToBigQueryWithAPI.py \
     --requirements_file requirements.txt &
 ```
 
+## Docker
+
+Build Docker container:
+
+```shell script
+docker build -t gcr.io/$PROJECT_ID/dataflow .
+```
+
+Start API
+
+```shell script
+docker run -d -itd --env-file=config.env \
+ -v /Users/gogasca/Documents/Development/dpe/keys/news-ml.json:/config \
+ gcr.io/$PROJECT_ID/dataflow:latest &
+```

@@ -1,3 +1,16 @@
+# Copyright 2019 Google LLC.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 """A streaming python pipeline to read in PubSub tweets and perform
 classification using Prediction API"""
 
@@ -30,7 +43,7 @@ socket.setdefaulttimeout(TIMEOUT_IN_SEC)
 PROJECT_ID = os.getenv('PROJECT_ID')
 DISCOVERY_URL = 'https://storage.googleapis.com/cloud-ml/discovery' \
                 '/ml_v1_discovery.json'
-MODEL_VERSION = 'projects/news-ml-257304/models/twitter'  # Required field.
+MODEL_VERSION = 'projects/news-ml-257304/models/twitter_model'  # Required field.
 api_client = None
 
 
@@ -99,7 +112,7 @@ def prediction_helper(messages):
     scores = get_sentiment(
         [format_text(instance.get('text')) for instance in instances if
          instance.get('text')])
-    
+
     if len(scores) == len(instances):
         for i, instance in enumerate(instances):
             instance['sentiment'] = scores[i]
