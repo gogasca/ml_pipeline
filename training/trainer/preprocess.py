@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Pre-process for Custom Prediction."""
+
 from tensorflow.python.keras.preprocessing import sequence
 from tensorflow.keras.preprocessing import text
 import re

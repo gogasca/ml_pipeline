@@ -15,8 +15,8 @@
 from setuptools import setup
 
 setup(
-  name='twitter_sentiment_classifier',
-  version='0.2',
+  name='sentiment_classifier',
+  version='0.3',
   include_package_data=True,
   scripts=['preprocess.py', 'model_prediction.py']
 )

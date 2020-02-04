@@ -87,3 +87,11 @@ source ./scripts/train-cloud.sh
 
 ### Versions
 TensorFlow v1.14.0+
+
+### References
+
+https://www.kaggle.com/kazanova/sentiment140
+https://www.tensorflow.org/tutorials/keras/text_classification_with_hub
+https://github.com/tensorflow/models/tree/master/research/sentiment_analysis
+https://towardsdatascience.com/game-of-thrones-twitter-sentiment-with-keras-apache-beam-bigquery-and-pubsub-382a770f6583
+https://towardsdatascience.com/keras-challenges-the-avengers-541346acb804

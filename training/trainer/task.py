@@ -19,6 +19,7 @@ import argparse
 import logging
 import os
 import pickle
+import subprocess
 import sys
 
 from datetime import datetime
@@ -162,11 +163,6 @@ def get_args():
         """,
         type=int,
         default=None)
-    args_parser.add_argument(
-        '--eval-frequency-secs',
-        help='How many seconds to wait before running the next evaluation.',
-        default=15,
-        type=int)
     # Saved model arguments
     args_parser.add_argument(
         '--job-dir',
@@ -180,6 +176,16 @@ def get_args():
         '--preprocessor-state-file',
         help='GCS location to write checkpoints and export models.',
         default='./processor_state.pkl')
+    args_parser.add_argument(
+        '--deploy-gcp',
+        action='store_true',
+        default=False,
+        help='Local or GCS location for writing checkpoints and exporting '
+             'models')
+    args_parser.add_argument(
+        '--gcs-bucket',
+        type=str,
+        help='GCS bucket')
     args_parser.add_argument(
         '--reuse-job-dir',
         action='store_true',
@@ -226,7 +232,21 @@ def _setup_logging():
     # Suppress C++ level warnings.
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     
-    
+
+def copy_artifacts(source_path, destination_path):
+    """
+    :param source_path:
+    :param destination_path:
+    :return:
+    """
+    logging.info(
+        'Moving model directory from {} to {}'.format(source_path,
+                                                      destination_path))
+    subprocess.call(
+        "gsutil -m cp -r {} {}".format(source_path, destination_path),
+        shell=True)
+
+
 def get_coefficients(word, *arr):
     """
 
@@ -251,9 +271,10 @@ def main():
     else:
         logging.info('Reusing job_dir {} if it exists'.format(args.job_dir))
 
-    run_config = experiment.create_run_config(args)
-    
-    logging.info('Job directory: {}'.format(run_config.model_dir))
+    logging.info('Job directory: {}'.format(args.job_dir))
+    logging.info('Keras saved model: {}'.format(args.saved_model))
+    logging.info(
+        'Pre-processor saved model: {}'.format(args.preprocessor_state_file))
     logging.info('Epoch count: {}.'.format(args.num_epochs))
     logging.info('Batch size: {}.'.format(args.batch_size))
 
@@ -317,6 +338,18 @@ def main():
     logging.info('Experiment elapsed time: {} seconds'.format(
         time_elapsed.total_seconds()))
 
-    
+    if args.deploy_gcp:
+        if not args.gcs_bucket:
+            raise ValueError('No GCS bucket')
+        # Copy Keras model
+        model_gcs_path = os.path.join('gs://', args.gcs_bucket,
+                                      args.saved_model)
+        copy_artifacts(args.saved_model, model_gcs_path)
+        # Copy Pre-processor
+        process_gcs_path = os.path.join('gs://', args.gcs_bucket,
+                                        args.preprocessor_state_file)
+        copy_artifacts(args.preprocessor_state_file, process_gcs_path)
+
+
 if __name__ == '__main__':
     main()

@@ -14,7 +14,7 @@
 
 import tensorflow as tf
 
-KERNEL_SIZES = [2, 5, 8]
+_KERNEL_SIZES = [2, 5, 8]
 
 
 def create_model(vocab_size, embedding_dim, filters, dropout_rate,
@@ -44,7 +44,7 @@ def create_model(vocab_size, embedding_dim, filters, dropout_rate,
 
     # Convolutional block
     conv_blocks = []
-    for kernel_size in KERNEL_SIZES:
+    for kernel_size in _KERNEL_SIZES:
         conv = tf.keras.layers.Convolution1D(
             filters=filters,
             kernel_size=kernel_size,
