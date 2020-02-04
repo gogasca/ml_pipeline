@@ -20,6 +20,7 @@ import logging
 import os
 import pickle
 import subprocess
+import os
 import sys
 
 from datetime import datetime
@@ -266,6 +267,10 @@ def get_embeddings(args, processor):
     :param processor:
     :return:
     """
+    if args.glove_file.startswith('gs://'):
+        local_glove_file = os.path.basename(args.glove_file)
+        copy_artifacts(args.glove_file, local_glove_file)
+        args.glove_file = local_glove_file
     embeddings_index = dict(get_coefficients(*o.strip().split()) for o in
                             open(args.glove_file, 'r', encoding='utf8'))
 

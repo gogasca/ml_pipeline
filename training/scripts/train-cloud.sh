@@ -27,10 +27,10 @@ PYTHON_VERSION=3.5
 BUCKET_NAME="" # TODO Change to your bucket name.
 REGION="us-central1"
 PACKAGE_PATH=./trainer
-MODEL_DIR="models"
-TRAINING_FILE="training.csv"
-GLOVE_FILE="glove.twitter.27B.50d.txt"
-PACKAGES_DIR="packages"
+MODEL_DIR="gs://$BUCKET_NAME/models"
+TRAINING_FILE="gs://$BUCKET_NAME/training.csv"
+GLOVE_FILE="gs://$BUCKET_NAME/glove.twitter.27B.50d.txt"
+PACKAGES_DIR="gs://$BUCKET_NAME/packages"
 SAVED_MODEL_NAME="keras_saved_model.h5"
 PROCESSOR_STATE_FILE="processor_state.pkl"
 
@@ -61,4 +61,4 @@ gcloud ai-platform jobs submit training ${JOB_NAME} \
         --gcs-bucket=${BUCKET_NAME} \
 
 python setup.py sdist
-gsutil cp ./dist/${MODEL_NAME}-0.1.tar.gz gs://${BUCKET}/${PACKAGES_DIR}/${MODEL_NAME}-0.1.tar.gz
+gsutil cp ./dist/${MODEL_NAME}-0.1.tar.gz gs://${BUCKET_NAME}/${PACKAGES_DIR}/${MODEL_NAME}-0.1.tar.gz

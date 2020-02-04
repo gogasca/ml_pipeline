@@ -22,6 +22,8 @@ def create_model(args, embedding_matrix):
     :param embedding_matrix: 
     :return: 
     """
+    conv_blocks = []
+
     # Input layer
     model_input = tf.keras.layers.Input(shape=(args.max_sequence_length,),
                                         dtype='int32')
@@ -32,10 +34,10 @@ def create_model(args, embedding_matrix):
         input_length=args.max_sequence_length,
         weights=[embedding_matrix]
     )(model_input)
-    layer = tf.keras.layers.Dropout(args.dropout_rate)(layer)
 
+    layer = tf.keras.layers.Dropout(args.dropout_rate)(layer)
     # Convolutional block
-    conv_blocks = []
+
     for kernel_size in args.kernel_sizes:
         conv = tf.keras.layers.Convolution1D(
             filters=args.filter_size,

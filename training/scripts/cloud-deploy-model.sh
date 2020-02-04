@@ -14,7 +14,7 @@
 # limitations under the License.
 
 REGION="us-central1" # choose a GCP region, e.g. "us-central1". Choose from https://cloud.google.com/ml-engine/docs/tensorflow/regions
-BUCKET="your-bucket-name" # change to your bucket name, e.g. "my-bucket"
+BUCKET_NAME="your-bucket-name" # change to your bucket name, e.g. "my-bucket"
 
 MODEL_NAME="sentiment_analysis" # change to your model name, e.g. "my-model"
 MODEL_VERSION="v1" # change to your model version, e.g. "v1"
@@ -36,8 +36,8 @@ gcloud ai-platform models create ${MODEL_NAME} --regions=${REGION}
 # Deploy model version
 gcloud beta ai-platform versions create ${MODEL_VERSION} \
  --model ${MODEL_NAME} \
- --origin gs://{BUCKET}/{MODEL_DIR} \
+ --origin gs://{BUCKET_NAME}/{MODEL_DIR} \
  --python-version ${PYTHON_VERSION} \
  --runtime-version ${RUNTIME_VERSION} \
- --package-uris gs://{BUCKET}/{PACKAGES_DIR}/sentiment_analysis-0.1.tar.gz \
+ --package-uris gs://${BUCKET_NAME}/${PACKAGES_DIR}/sentiment_analysis-0.1.tar.gz \
  --prediction-class=model_prediction.CustomModelPrediction

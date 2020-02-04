@@ -18,7 +18,6 @@ import logging
 import math
 import os
 import tensorflow as tf
-import tensorflow_model_analysis as tfma
 
 
 def create_run_config(args):
