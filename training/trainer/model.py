@@ -14,45 +14,37 @@
 
 import tensorflow as tf
 
-_KERNEL_SIZES = [2, 5, 8]
 
-
-def create_model(vocab_size, embedding_dim, filters, dropout_rate,
-                 pool_size, embedding_matrix, max_sequence_length):
+def create_model(args, embedding_matrix):
     """
-
-    :param vocab_size:
-    :param embedding_dim:
-    :param filters:
-    :param dropout_rate:
-    :param pool_size:
-    :param embedding_matrix:
-    :param max_sequence_length:
-    :return:
+    
+    :param args: 
+    :param embedding_matrix: 
+    :return: 
     """
     # Input layer
-    model_input = tf.keras.layers.Input(shape=(max_sequence_length,),
+    model_input = tf.keras.layers.Input(shape=(args.max_sequence_length,),
                                         dtype='int32')
     # Embedding layer
     layer = tf.keras.layers.Embedding(
-        input_dim=vocab_size + 1,
-        output_dim=embedding_dim,
-        input_length=max_sequence_length,
+        input_dim=args.vocab_size + 1,
+        output_dim=args.embedding_dim,
+        input_length=args.max_sequence_length,
         weights=[embedding_matrix]
     )(model_input)
-    layer = tf.keras.layers.Dropout(dropout_rate)(layer)
+    layer = tf.keras.layers.Dropout(args.dropout_rate)(layer)
 
     # Convolutional block
     conv_blocks = []
-    for kernel_size in _KERNEL_SIZES:
+    for kernel_size in args.kernel_sizes:
         conv = tf.keras.layers.Convolution1D(
-            filters=filters,
+            filters=args.filter_size,
             kernel_size=kernel_size,
             padding='valid',
             activation='relu',
             bias_initializer='random_uniform',
             strides=1)(layer)
-        conv = tf.keras.layers.MaxPooling1D(pool_size=pool_size)(conv)
+        conv = tf.keras.layers.MaxPooling1D(pool_size=args.pool_size)(conv)
         conv = tf.keras.layers.Flatten()(conv)
         conv_blocks.append(conv)
 
@@ -60,7 +52,7 @@ def create_model(vocab_size, embedding_dim, filters, dropout_rate,
         else \
         conv_blocks[0]
 
-    layer = tf.keras.layers.Dropout(dropout_rate)(layer)
+    layer = tf.keras.layers.Dropout(args.dropout_rate)(layer)
     layer = tf.keras.layers.Dense(100, activation='relu')(layer)
     model_output = tf.keras.layers.Dense(1, activation='sigmoid')(layer)
     model = tf.keras.models.Model(model_input, model_output)

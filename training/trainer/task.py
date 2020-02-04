@@ -148,7 +148,9 @@ def get_args():
         Kernel sizes to use for DNN feature columns, provided in
         comma-separated layers.       
         """,
-        default='2, 5, 8')
+        nargs='+',
+        type=int,
+        default=[2, 5, 8])
     args_parser.add_argument(
         '--vocab-size',
         help="""
@@ -257,6 +259,28 @@ def get_coefficients(word, *arr):
     return word, np.asarray(arr, dtype='float32')
 
 
+def get_embeddings(args, processor):
+    """
+
+    :param args:
+    :param processor:
+    :return:
+    """
+    embeddings_index = dict(get_coefficients(*o.strip().split()) for o in
+                            open(args.glove_file, 'r', encoding='utf8'))
+
+    word_index = processor.tokenizer.word_index
+    nb_words = min(args.vocab_size, len(word_index))
+    embedding_matrix = np.zeros((nb_words + 1, args.embedding_dim))
+
+    for word, i in word_index.items():
+        if i >= args.vocab_size: continue
+        embedding_vector = embeddings_index.get(word)
+        if embedding_vector is not None: embedding_matrix[i] = embedding_vector
+
+    return embedding_matrix
+
+
 def main():
     args = get_args()
     _setup_logging()
@@ -305,23 +329,10 @@ def main():
     with open(args.preprocessor_state_file, 'wb') as f:
         pickle.dump(processor, f)
 
-    embeddings_index = dict(get_coefficients(*o.strip().split()) for o in
-                            open(args.glove_file, 'r', encoding='utf8'))
-
-    word_index = processor.tokenizer.word_index
-    nb_words = min(args.vocab_size, len(word_index))
-    embedding_matrix = np.zeros((nb_words + 1, args.embedding_dim))
-
-    for word, i in word_index.items():
-        if i >= args.vocab_size: continue
-        embedding_vector = embeddings_index.get(word)
-        if embedding_vector is not None: embedding_matrix[i] = embedding_vector
+    embedding_matrix = get_embeddings(args, processor)
 
     # Create the Keras model.
-    _model = model.create_model(args.vocab_size, args.embedding_dim,
-                                args.filter_size,                               
-                                args.dropout_rate, args.pool_size,
-                                embedding_matrix, args.max_sequence_length)
+    _model = model.create_model(args, embedding_matrix)
 
     # Run the train and evaluate experiment
     time_start = datetime.utcnow()
