@@ -11,12 +11,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from setuptools import find_packages
 from setuptools import setup
 
+REQUIRED_PACKAGES = [
+    'gcsfs'
+]
+
 setup(
-  name='sentiment_classifier',
-  version='0.1',
-  include_package_data=True,
-  scripts=['preprocess.py', 'model_prediction.py']
+    name='trainer',
+    description='AI Platform Training job for TensorFlow',
+    author='Google Cloud Platform',
+    version='0.1',
+    install_requires=REQUIRED_PACKAGES,
+    packages=find_packages(),
+    include_package_data=True
 )

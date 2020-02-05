@@ -17,6 +17,7 @@
 import logging
 import math
 import os
+import pickle
 import tensorflow as tf
 
 
@@ -35,6 +36,7 @@ def create_run_config(args):
                     if "/device:GPU" in device_name])
     logging.info("%s GPUs are available.", str(num_gpus))
     if num_gpus > 1:
+        os.environ['TF_ENABLE_AUTO_MIXED_PRECISION'] = '1'
         distribution_strategy = tf.distribute.MirroredStrategy()
         logging.info("MirroredStrategy will be used for training.")
         # Update the batch size

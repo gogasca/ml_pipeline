@@ -48,7 +48,10 @@ gcloud ai-platform local train \
         --preprocessor-state-file=${PROCESSOR_STATE_FILE}
 
 
+
+EOF
 python setup.py sdist
 gsutil cp ./dist/${MODEL_NAME}-0.1.tar.gz gs://${BUCKET_NAME}/${PACKAGES_DIR}/${MODEL_NAME}-0.1.tar.gz
 gsutil cp ${SAVED_MODEL_NAME} gs://${BUCKET_NAME}/${MODEL_DIR}/
 gsutil cp ${PROCESSOR_STATE_FILE}.pkl gs://${BUCKET_NAME}/${MODEL_DIR}/
+

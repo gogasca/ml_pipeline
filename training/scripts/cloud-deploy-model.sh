@@ -16,7 +16,8 @@
 REGION="us-central1" # choose a GCP region, e.g. "us-central1". Choose from https://cloud.google.com/ml-engine/docs/tensorflow/regions
 BUCKET_NAME="your-bucket-name" # change to your bucket name, e.g. "my-bucket"
 
-MODEL_NAME="sentiment_analysis" # change to your model name, e.g. "my-model"
+PACKAGES_DIR=gs://"${BUCKET_NAME}"/packages
+MODEL_NAME="sentiment_classifier"
 MODEL_VERSION="v1" # change to your model version, e.g. "v1"
 
 # Model Binaries corresponds to the tf.estimator.FinalExporter configuration in trainer/experiment.py
@@ -25,19 +26,19 @@ PYTHON_VERSION=3.5
 
 
 # Delete model version, if previous model version exist.
-gcloud ai-platform versions delete ${MODEL_VERSION} --model=${MODEL_NAME}
+gcloud ai-platform versions delete "${MODEL_VERSION}" --model="${MODEL_NAME}"
 
 # Delete model, if previous model exist.
-gcloud ai-platform models delete ${MODEL_NAME}
+gcloud ai-platform models delete "${MODEL_NAME}"
 
 # Deploy model to GCP
-gcloud ai-platform models create ${MODEL_NAME} --regions=${REGION}
+gcloud ai-platform models create "${MODEL_NAME}" --regions="${REGION}"
 
 # Deploy model version
-gcloud beta ai-platform versions create ${MODEL_VERSION} \
- --model ${MODEL_NAME} \
- --origin gs://{BUCKET_NAME}/{MODEL_DIR} \
- --python-version ${PYTHON_VERSION} \
- --runtime-version ${RUNTIME_VERSION} \
- --package-uris gs://${BUCKET_NAME}/${PACKAGES_DIR}/sentiment_analysis-0.1.tar.gz \
+gcloud beta ai-platform versions create "${MODEL_VERSION}" \
+ --model="${MODEL_NAME}" \
+ --origin=gs://"${BUCKET_NAME}"/"${MODEL_DIR}" \
+ --python-version="${PYTHON_VERSION}" \
+ --runtime-version="${RUNTIME_VERSION}" \
+ --package-uris="${PACKAGES_DIR}"/"${MODEL_NAME}"-0.1.tar.gz \
  --prediction-class=model_prediction.CustomModelPrediction

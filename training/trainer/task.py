@@ -304,6 +304,8 @@ def main():
     logging.info('Keras saved model: {}'.format(args.saved_model))
     logging.info(
         'Pre-processor saved model: {}'.format(args.preprocessor_state_file))
+    logging.info('Training file: {}'.format(args.train_file))
+    logging.info('Glove file: {}'.format(args.glove_file))
     logging.info('Epoch count: {}.'.format(args.num_epochs))
     logging.info('Batch size: {}.'.format(args.batch_size))
 
@@ -336,13 +338,12 @@ def main():
 
     embedding_matrix = get_embeddings(args, processor)
 
-    # Create the Keras model.
-    _model = model.create_model(args, embedding_matrix)
-
     # Run the train and evaluate experiment
     time_start = datetime.utcnow()
     logging.info('Experiment started...')
     logging.info('.......................................')
+    # Create the Keras model.
+    _model = model.create_model(args, embedding_matrix)
     # Run experiment
     experiment.run(_model, args, train_texts_vectorized, y_train,
                    eval_texts_vectorized, y_test)
@@ -358,11 +359,11 @@ def main():
         if not args.gcs_bucket:
             raise ValueError('No GCS bucket')
         # Copy Keras model
-        model_gcs_path = os.path.join('gs://', args.gcs_bucket,
+        model_gcs_path = os.path.join('gs://', args.gcs_bucket, 'models'
                                       args.saved_model)
         copy_artifacts(args.saved_model, model_gcs_path)
         # Copy Pre-processor
-        process_gcs_path = os.path.join('gs://', args.gcs_bucket,
+        process_gcs_path = os.path.join('gs://', args.gcs_bucket,'models',
                                         args.preprocessor_state_file)
         copy_artifacts(args.preprocessor_state_file, process_gcs_path)
 
