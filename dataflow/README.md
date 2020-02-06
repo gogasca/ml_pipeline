@@ -1,6 +1,7 @@
 ## Streaming Analytics
 
-### Google Cloud Pub/Sub to AI Platform and then Google Cloud BigQuery
+### Google Cloud E2E Machine Learning Pipeline.
+#### Pub/Sub to AI Platform and then Google Cloud BigQuery
 
 * [PubSubToBigQuery.py](PubSubToBigQuery.py)
 
@@ -99,6 +100,6 @@ Start API
 
 ```shell script
 docker run -d -itd --env-file=config.env \
- -v /Users/gogasca/Documents/Development/dpe/keys/news-ml.json:/config \
+ -v /keys/service-account.json:/config \
  gcr.io/$PROJECT_ID/dataflow:latest &
 ```

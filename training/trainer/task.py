@@ -289,6 +289,7 @@ def get_embeddings(args, processor):
 def main():
     args = get_args()
     _setup_logging()
+    os.cpu_count()
 
     # If job_dir_reuse is False then remove the job_dir if it exists.
     logging.info('Resume training: {}'.format(args.reuse_job_dir))
@@ -358,12 +359,12 @@ def main():
     if args.deploy_gcp:
         if not args.gcs_bucket:
             raise ValueError('No GCS bucket')
-        # Copy Keras model
-        model_gcs_path = os.path.join('gs://', args.gcs_bucket, 'models'
+        # Copy Keras model and pre-processor.
+        model_gcs_path = os.path.join('gs://', args.gcs_bucket, 'models',
                                       args.saved_model)
         copy_artifacts(args.saved_model, model_gcs_path)
         # Copy Pre-processor
-        process_gcs_path = os.path.join('gs://', args.gcs_bucket,'models',
+        process_gcs_path = os.path.join('gs://', args.gcs_bucket, 'models',
                                         args.preprocessor_state_file)
         copy_artifacts(args.preprocessor_state_file, process_gcs_path)
 

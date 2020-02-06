@@ -85,7 +85,45 @@ source ./scripts/train-local.sh
 source ./scripts/train-cloud.sh
 ```
 
+### Custom prediction
+
+We have created the sentiment-classifier package to be deployed in AI
+Platform prediction, you can recreate it as instructed in Notebook or as
+follows:
+
+1. Update setup.py
+
+```python
+from setuptools import setup
+
+setup(
+  name="custom_prediction",
+  version="0.1",
+  include_package_data=True,
+  scripts=["preprocess.py", "model_prediction.py"]
+)
+```
+2. Copy `preprocess.py` and `model_prediction.py` to same folder as
+`setup.py`
+```
+
+```
+ 
+3. Install it
+
+```shell script
+ python setup.py sdist -formats=gztar
+```
+A new file under dist/ folder will be created.
+
+4. Move it to GCS
+
+```shell script 
+gsutil cp ./dist/custom_prediction-0.1.tar.gz gs://"${PACKAGES_DIR}"/custom_prediction-0.1.tar.gz
+```
+
 ### Versions
+
 TensorFlow v1.14.0+
 
 ### References

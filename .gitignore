@@ -2,7 +2,11 @@
 [Tt]humbs.db
 *.DS_Store
 
-env.sh
+training.csv
+glove.twitter.27B.50d.txt
+processor_state.pkl
+config.env
+set_env.sh
 .idea/*
 
 #Visual Studio files

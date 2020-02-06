@@ -1,4 +1,4 @@
-# Copyright 2019 Google LLC.
+# Copyright 2020 Google LLC.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ socket.setdefaulttimeout(TIMEOUT_IN_SEC)
 PROJECT_ID = os.getenv('PROJECT_ID')
 DISCOVERY_URL = 'https://storage.googleapis.com/cloud-ml/discovery' \
                 '/ml_v1_discovery.json'
-MODEL_VERSION = 'projects/news-ml-257304/models/twitter_model'  # Required field.
+MODEL_VERSION = 'projects/{}/models/twitter_model'.format(PROJECT_ID)  # Required field.
 api_client = None
 
 

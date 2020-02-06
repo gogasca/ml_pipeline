@@ -24,7 +24,7 @@ MODEL_NAME="sentiment_classifier" # Change to your model name, e.g. "estimator"
 RUNTIME_VERSION=1.15
 PYTHON_VERSION=3.5
 
-BUCKET_NAME="news-ml" # TODO Change to your bucket name.
+BUCKET_NAME="" # TODO Change to your bucket name.
 REGION="us-central1"
 PACKAGE_PATH=./trainer
 MODEL_DIR="gs://$BUCKET_NAME/models"
@@ -59,42 +59,3 @@ gcloud ai-platform jobs submit training "${JOB_NAME}" \
         --preprocessor-state-file="${PROCESSOR_STATE_FILE}" \
         --deploy-gcp \
         --gcs-bucket="${BUCKET_NAME}" \
-
-
-read -p "Press enter to continue"
-rm -rf ../setup.py
-# Recreate the Setup file
-cat << 'EOF' > "../setup.py"
-from setuptools import setup
-
-setup(
-  name="sentiment_classifier",
-  version="0.1",
-  include_package_data=True,
-  scripts=["preprocess.py", "model_prediction.py"]
-)
-EOF
-
-python setup.py sdist
-gsutil cp ./dist/"${MODEL_NAME}"-0.1.tar.gz "${PACKAGES_DIR}"/"${MODEL_NAME}"-0.1.tar.gz
-
-# Revert to original setup file
-rm -rf ../setup.py
-cat << 'EOF' > "../setup.py"
-from setuptools import find_packages
-from setuptools import setup
-
-REQUIRED_PACKAGES = [
-    'gcsfs'
-]
-
-setup(
-    name='trainer',
-    description='AI Platform Training job for TensorFlow',
-    author='Google Cloud Platform',
-    version='0.1',
-    install_requires=REQUIRED_PACKAGES,
-    packages=find_packages(),
-    include_package_data=True
-)
-EOF

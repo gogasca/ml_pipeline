@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import tensorflow as tf
+import os
 
 
 def create_model(args, embedding_matrix):
@@ -22,8 +23,11 @@ def create_model(args, embedding_matrix):
     :param embedding_matrix: 
     :return: 
     """
+    # Set number of threads used for parallelism between independent operations.
+    if os.cpu_count():
+        tf.config.threading.set_inter_op_parallelism_threads(os.cpu_count())
+        
     conv_blocks = []
-
     # Input layer
     model_input = tf.keras.layers.Input(shape=(args.max_sequence_length,),
                                         dtype='int32')
